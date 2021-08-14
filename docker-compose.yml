@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/server
+    command: >
+      sh -c "python manage.py makemigrations && 
+      python manage.py migrate && 
+      python manage.py runserver 0.0.0.0:8000"
+    container_name: api_service
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=cryptracker
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+
+  db:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_DB=cryptracker
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
